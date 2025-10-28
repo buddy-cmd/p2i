@@ -1,25 +1,35 @@
-# 🖼️ p2i — Prompt-to-Image Transformer
+# 🖼️ Prompt-to-Image Transformer (p2i)
 
-A privacy-first, open-source image transformation tool powered by Stable Diffusion XL, Refiner, and ControlNet.
+Transform your images using advanced AI models like **SDXL**, **Refiner**, and **ControlNet** — all from a simple prompt. Built for privacy-first, open-source deployment.
 
-## 🔧 Features
+![HuggingFace Space](https://img.shields.io/badge/Live%20Demo-HuggingFace-blue?logo=huggingface)
+![GitHub Repo](https://img.shields.io/github/stars/buddy-cmd/p2i?style=social)
 
-- Prompt-based image-to-image transformation (SDXL)
-- ControlNet support (Canny, Depth, Pose, Segmentation)
-- SDXL Refiner for high-quality output
-- Classic filters (grayscale, blur, sharpen, etc.)
-- Frontend with:
-  - Prompt suggestions
-  - Control image upload + preview
-  - Download buttons + Download All
-  - History tab with Clear History
-  - Theme toggle (Light/Dark)
-  - Webcam capture
+---
 
-## 🚀 Deployment
+## 🚀 Features
 
-### Local
+- ✨ SDXL-based image generation
+- 🧠 Refiner for high-quality enhancement
+- 🧩 ControlNet support (canny, depth, pose, etc.)
+- 📤 Upload your own image
+- 📝 Prompt-based transformation
+- 🎛️ Select ControlNet type
+- 📥 Download transformed output
+
+---
+
+## 🖥️ Live Demo
+
+Try it now on HuggingFace Spaces:  
+🔗 [https://huggingface.co/spaces/buddy-cmd/p2i](https://huggingface.co/spaces/buddy-cmd/p2i)
+
+---
+
+## 📦 Installation (Local)
 
 ```bash
+git clone https://github.com/buddy-cmd/p2i.git
+cd p2i
 pip install -r requirements.txt
 python app.py
