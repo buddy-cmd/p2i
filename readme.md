@@ -1,4 +1,5 @@
 # 🖼️ Prompt-to-Image Transformer (p2i)
+<<<<<<< HEAD
 
 Transform your images using advanced AI models like **SDXL**, **Refiner**, and **ControlNet** — all from a simple prompt. Built for privacy-first, open-source deployment.
 
@@ -7,6 +8,15 @@ Transform your images using advanced AI models like **SDXL**, **Refiner**, and *
 
 ---
 
+=======
+[![Live Demo](https://img.shields.io/badge/HuggingFace%20Space-p2i-blue?logo=huggingface)](https://huggingface.co/spaces/sadare6381/buddy-cmd-api)
+Transform your images using advanced AI models like **SDXL**, **Refiner**, and **ControlNet** — all from a simple prompt. Built for privacy-first, open-source deployment.
+
+[![Live Demo](https://img.shields.io/badge/HuggingFace%20Space-p2i-blue?logo=huggingface)](https://huggingface.co/spaces/sadare6381/buddy-cmd-api)
+
+---
+
+>>>>>>> ae24cd9 (Added HuggingFace badge and updated files)
 ## 🚀 Features
 
 - ✨ SDXL-based image generation
@@ -19,6 +29,7 @@ Transform your images using advanced AI models like **SDXL**, **Refiner**, and *
 
 ---
 
+<<<<<<< HEAD
 ## 🖥️ Live Demo
 
 Try it now on HuggingFace Spaces:  
@@ -26,6 +37,8 @@ Try it now on HuggingFace Spaces:
 
 ---
 
+=======
+>>>>>>> ae24cd9 (Added HuggingFace badge and updated files)
 ## 📦 Installation (Local)
 
 ```bash
