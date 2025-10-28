@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>p2i — Prompt to Image</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .dark-mode {
+      background-color: #121212;
+      color: #eee;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+    input, select, button, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    img {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+    .spinner {
+      display: none;
+      margin-top: 20px;
+    }
+    .output {
+      margin-top: 20px;
+    }
+    .tab-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🖼️ p2i — Prompt to Image</h2>
+
+    <div class="tab-buttons">
+      <button id="tabTransform">Transform</button>
+      <button id="tabHistory">History</button>
+      <button id="toggleTheme">Toggle Theme</button>
+    </div>
+
+    <form>
+      <label for="prompt">Prompt:</label>
+      <input type="text" id="prompt" name="prompt" placeholder="Describe your image..." />
+
+      <div id="suggestions">
+        <button type="button" onclick="fillPrompt('A futuristic cityscape at night')">Cityscape</button>
+        <button type="button" onclick="fillPrompt('A portrait of a cyberpunk warrior')">Cyberpunk</button>
+        <button type="button" onclick="fillPrompt('A dreamy forest with glowing mushrooms')">Fantasy Forest</button>
+      </div>
+
+      <label for="filter">Filter:</label>
+      <select id="filter" name="filter">
+        <option value="grayscale">Grayscale</option>
+        <option value="blur">Blur</option>
+        <option value="contour">Contour</option>
+        <option value="sharpen">Sharpen</option>
+        <option value="ai">AI (Stable Diffusion)</option>
+      </select>
+
+      <label for="size">Image Size:</label>
+      <select id="size" name="size">
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+      </select>
+
+      <label for="image">Upload Image:</label>
+      <input type="file" id="image" name="image" accept="image/*" />
+      <img id="preview" src="" alt="Image Preview" style="display:none;" />
+
+      <label for="control_image">Control Image (optional):</label>
+      <input type="file" id="control_image" name="control_image" accept="image/*" />
+      <img id="controlPreview" src="" alt="Control Image Preview" style="display:none;" />
+
+      <label for="control_type">ControlNet Type:</label>
+      <select id="control_type" name="control_type">
+        <option value="">None</option>
+        <option value="canny">Canny (edges)</option>
+        <option value="depth">Depth map</option>
+        <option value="pose">Pose map</option>
+        <option value="seg">Segmentation</option>
+      </select>
+
+      <button type="submit">Transform</button>
+    </form>
+
+    <div class="spinner" id="spinner">Processing...</div>
+
+    <div class="output" id="response"></div>
+
+    <div id="historyContainer" style="display:none;">
+      <h3>Transformation History</h3>
+      <button id="clearHistory">Clear History</button>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.querySelector('form');
+    const spinner = document.getElementById('spinner');
+    const response = document.getElementById('response');
+    const promptInput = document.getElementById('prompt');
+
+    document.getElementById('image').addEventListener('change', function () {
+      const file = this.files[0];
+      const preview = document.getElementById('preview');
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.src = '';
+        preview.style.display = 'none';
+      }
+    });
+
+    document.getElementById('control_image').addEventListener('change', function () {
+      const file = this.files[0];
+      const controlPreview = document.getElementById('controlPreview');
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          controlPreview.src = e.target.result;
+          controlPreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        controlPreview.src = '';
+        controlPreview.style.display = 'none';
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      spinner.style.display = 'block';
+      response.innerHTML = '';
+
+      const formData = new FormData(form);
+      formData.append('control_type', document.getElementById('control_type').value);
+
+      const controlFile = document.getElementById('control_image').files[0];
+      if (controlFile) {
+        formData.append('control_image', controlFile);
+      }
+
+      const res = await fetch('/p2i', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      spinner.style.display = 'none';
+
+      if (data.preview_urls) {
+        const container = document.createElement('div');
+        const downloadAll = document.createElement('button');
+        downloadAll.textContent = 'Download All';
+        downloadAll.onclick = () => {
+          data.preview_urls.forEach(url => {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = url.split('/').pop();
+            link.click();
+          });
+        };
+        container.appendChild(downloadAll);
+
+        data.preview_urls.forEach(url => {
+          const img = document.createElement('img');
+          img.src = url;
+          container.appendChild(img);
+
+          const dl = document.createElement('button');
+          dl.textContent = 'Download';
+          dl.onclick = () => {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = url.split('/').pop();
+            link.click();
+          };
+          container.appendChild(dl);
+        });
+
+        response.appendChild(container);
+
+        const history = JSON.parse(localStorage.getItem('p2iHistory') || '[]');
+        history.push({
+          prompt: promptInput.value,
+          filter: document.getElementById('filter').value,
+          size: document.getElementById('size').value,
+          controlType: document.getElementById('control_type').value,
+          images: data.preview_urls.map(url => url)
+        });
+        localStorage.setItem('p2iHistory', JSON.stringify(history));
+      }
+    });
+
+    function fillPrompt(text) {
+      promptInput.value = text;
+    }
+
+    const tabTransform = document.getElementById('tabTransform');
+    const tabHistory = document.getElementById('tabHistory');
+    const historyContainer = document.getElementById('historyContainer');
+    const formContainer = document.querySelector('form');
+
+    tabTransform.onclick = () => {
+      formContainer.style.display = 'block';
+      historyContainer.style.display = 'none';
+    };
+
+    tabHistory.onclick = () => {
+      formContainer.style.display = 'none';
+      historyContainer.style.display = 'block';
+      loadHistory();
+    };
+
+    function loadHistory() {
+      const historyList = document.getElementById('historyList');
+      historyList.innerHTML = '';
+      const history = JSON.parse(localStorage.getItem('p2iHistory') || '[]');
+
+      if (history.length === 0) {
+        historyList.innerHTML = '<p>No history yet.</p>';
+        return;
+      }
+
+      history.reverse().forEach((entry, index) => {
+        const block = document.createElement('div');
+        block.style.marginBottom[43dcd9a7-70db-4a1f-b0ae-981daa162054](https://github.com/anuragitachi/php/tree/adbdf5801511fe876b7f0410d2bf7482d37126f2/PetFinder-master%2Fbuy.php?citationMarker=43dcd9a7-70db-4a1f-b0ae-981daa162054&citationId=1&citationId=2&citationId=3 "github.com")

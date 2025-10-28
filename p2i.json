@@ -1,0 +1,6 @@
+{
+  "default_prompt": "resize",
+  "supported_prompts": ["bright", "rotate", "contrast", "resize"],
+  "output_format": "JPEG",
+  "privacy": true
+}
