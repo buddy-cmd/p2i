@@ -1,84 +1,209 @@
+/* Base */
+:root {
+  --bg: #0f1115;
+  --panel: #1a1c22;
+  --input: #2a2d36;
+  --cyan: #00c2d0;
+  --cyan-d: #0099a8;
+  --text: #e0e0e0;
+  --muted: #aaa;
+}
+
+* { box-sizing: border-box; }
 body {
-  font-family: sans-serif;
-  background: #0f1115;
-  color: #e0e0e0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
   padding: 20px;
 }
-header {
+
+/* Header */
+.site-header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
-form {
+.site-logo {
+  max-height: 64px;
+  display: block;
+  margin: 0 auto 12px auto;
+}
+.site-header h1 {
+  color: var(--cyan);
+  font-size: 28px;
+  margin: 4px 0;
+}
+.site-header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Form */
+.gen-form {
+  max-width: 860px;
+  margin: 20px auto;
+  background: var(--panel);
+  padding: 24px;
+  border-radius: 14px;
   display: grid;
-  gap: 10px;
-  max-width: 600px;
-  margin: auto;
-  background: #1a1c22;
-  padding: 20px;
-  border-radius: 10px;
+  gap: 18px;
 }
-textarea, select, input[type="file"] {
+.form-block label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+textarea, select {
   width: 100%;
-  padding: 10px;
-  background: #2a2d36;
+  padding: 12px;
+  background: var(--input);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
 }
-button {
-  padding: 10px;
-  background: #00c2d0;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
+.subnote {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 6px;
+}
+#char-count {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: right;
+  margin-top: 6px;
+}
+
+/* Upload box */
+.upload-box {
+  border: 2px dashed var(--cyan);
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  background: #10131a;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.upload-box:hover {
+  background: #0f1219;
+  border-color: var(--cyan-d);
+}
+.upload-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+.upload-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background: var(--cyan);
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
 }
-#status {
-  text-align: center;
+.upload-note {
   margin-top: 10px;
+  font-size: 0.9em;
+  color: var(--muted);
 }
-.multi-comparison {
+.file-list {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Grid */
+.grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 30px;
+  gap: 16px;
+}
+
+/* Button */
+.generate-btn {
+  padding: 14px;
+  background: var(--cyan);
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+}
+.generate-btn:hover {
+  background: var(--cyan-d);
+}
+
+/* Status */
+.status {
+  text-align: center;
+  margin-top: 12px;
+  color: var(--muted);
+}
+
+/* Results */
+.multi-comparison {
+  max-width: 1100px;
+  margin: 28px auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
 }
 .comp-block {
-  background: #1a1c22;
-  padding: 15px;
-  border-radius: 10px;
+  background: var(--panel);
+  padding: 16px;
+  border-radius: 12px;
   text-align: center;
 }
 .comp-block h3 {
-  margin-bottom: 10px;
-  color: #00c2d0;
+  margin-bottom: 8px;
+  color: var(--cyan);
 }
-.comp-block img {
+.comp-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.comp-cell h4 {
+  margin: 8px 0;
+}
+.comp-cell img {
   max-width: 100%;
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 0 12px rgba(0,0,0,0.5);
   opacity: 0;
   transition: opacity 0.6s ease;
 }
-.comp-block img.loaded {
+.comp-cell img.loaded {
   opacity: 1;
 }
 .download-btn {
   display: inline-block;
-  margin-top: 10px;
+  margin-top: 8px;
   padding: 8px 12px;
-  background: #00c2d0;
+  background: var(--cyan);
   color: #fff;
-  border-radius: 6px;
+  border-radius: 8px;
   text-decoration: none;
-  font-weight: bold;
-  transition: background 0.3s ease;
+  font-weight: 600;
+  transition: background 0.25s ease;
 }
 .download-btn:hover {
-  background: #0099a8;
+  background: var(--cyan-d);
+}
+
+/* Footer */
+.site-footer {
+  max-width: 1100px;
+  margin: 24px auto 0 auto;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .multi-comparison { grid-template-columns: 1fr; }
 }
 @media (max-width: 720px) {
-  .multi-comparison {
-    grid-template-columns: 1fr;
-  }
+  .grid-2 { grid-template-columns: 1fr; }
 }
