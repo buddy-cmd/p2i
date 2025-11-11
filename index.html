@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P2i – Prompt to Image</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>P2i – Prompt to Image</h1>
+    <nav>
+      <a href="#">AI Tools</a>
+      <a href="#">Photo Effects</a>
+      <a href="#">My Creations</a>
+    </nav>
+  </header>
+
+  <main>
+    <form id="generateForm">
+      <label for="prompt">Prompt:</label>
+      <textarea id="prompt" name="prompt" rows="4" maxlength="1000" placeholder="Describe your image..."></textarea>
+
+      <label for="model">Model:</label>
+      <select id="model" name="model">
+        <option value="Max">Max (4K)</option>
+        <option value="Sketch">Sketch</option>
+        <option value="Fast">Fast</option>
+      </select>
+
+      <label for="aspect">Aspect Ratio:</label>
+      <select id="aspect" name="aspect">
+        <option value="1:1">1:1</option>
+        <option value="4:3">4:3</option>
+        <option value="16:9">16:9</option>
+      </select>
+
+      <label for="outputs">Number of Outputs:</label>
+      <select id="outputs" name="outputs">
+        <option value="1">1</option>
+        <option value="2" selected>2</option>
+        <option value="4">4</option>
+      </select>
+
+      <label for="imageUpload">Upload Image (optional):</label>
+      <input type="file" id="imageUpload" name="imageUpload" accept=".jpg,.jpeg,.png,.webp" />
+
+      <button type="submit">Generate Image</button>
+    </form>
+
+    <section id="results"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
