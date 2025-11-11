@@ -9,13 +9,18 @@ API_KEY = os.getenv("API_KEY")
 
 app = FastAPI()
 
-# Allow frontend access
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+ASPECT_TO_SIZE = {
+    "1:1": "1024x1024",
+    "4:3": "1024x768",
+    "16:9": "1280x720"
+}
 
 @app.post("/generate")
 async def generate_image(
@@ -25,31 +30,33 @@ async def generate_image(
     outputs: int = Form(1),
     image: UploadFile = File(None)
 ):
+    size = ASPECT_TO_SIZE.get(aspect_ratio, "1024x1024")
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
     }
-
-    # Aspect ratio mapping
-    size_map = {
-        "1:1": "1024x1024",
-        "4:3": "1024x768",
-        "16:9": "1280x720"
-    }
-    size = size_map.get(aspect_ratio, "1024x1024")
-
-    payload = {
-        "prompt": prompt,
-        "n": outputs,
-        "size": size
-    }
-
+    payload = { "prompt": prompt, "n": outputs, "size": size }
     url = "https://api.openai.com/v1/images/generations"
-    response = requests.post(url, headers=headers, json=payload)
 
-    if response.status_code == 200:
-        data = response.json()
-        images = [img["url"] for img in data.get("data", [])]
-        return {"images": images}
-    else:
-        return {"error": response.text}
+    # Note: This endpoint is text-to-image. If an image is uploaded, we currently ignore it
+    # but return a hint. Proper img2img can be wired to a variations/edits endpoint later.
+    hint = None
+    if image is not None:
+        hint = "Note: Uploaded image received. Current model uses text-to-image; img2img will be enabled in the next update."
+
+    try:
+        resp = requests.post(url, headers=headers, json=payload, timeout=60)
+        if resp.status_code != 200:
+            return {
+                "error": resp.text,
+                "hint": hint
+            }
+
+        data = resp.json()
+        images = [item["url"] for item in data.get("data", [])]
+        return {
+            "images": images,
+            "hint": hint
+        }
+    except requests.RequestException as e:
+        return { "error": f"Network error: {e}", "hint": hint }
