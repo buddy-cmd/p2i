@@ -1,62 +1,63 @@
 from fastapi import FastAPI, Form, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-import requests
-import os
+import requests, os
 from dotenv import load_dotenv
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
 
 app = FastAPI()
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
-
-ASPECT_TO_SIZE = {
-    "1:1": "1024x1024",
-    "4:3": "1024x768",
-    "16:9": "1280x720"
-}
 
 @app.post("/generate")
 async def generate_image(
     prompt: str = Form(...),
-    model: str = Form("Max"),
-    aspect_ratio: str = Form("1:1"),
+    size: str = Form("1024x1024"),
     outputs: int = Form(1),
-    image: UploadFile = File(None)
+    images: list[UploadFile] = File(None)
 ):
-    size = ASPECT_TO_SIZE.get(aspect_ratio, "1024x1024")
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
-    payload = { "prompt": prompt, "n": outputs, "size": size }
-    url = "https://api.openai.com/v1/images/generations"
-
-    # Note: This endpoint is text-to-image. If an image is uploaded, we currently ignore it
-    # but return a hint. Proper img2img can be wired to a variations/edits endpoint later.
-    hint = None
-    if image is not None:
-        hint = "Note: Uploaded image received. Current model uses text-to-image; img2img will be enabled in the next update."
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    results = []
 
     try:
-        resp = requests.post(url, headers=headers, json=payload, timeout=60)
-        if resp.status_code != 200:
-            return {
-                "error": resp.text,
-                "hint": hint
-            }
+        if images:
+            # ✅ Img2Img transformation for multiple images
+            for img in images[:5]:  # max 5 images
+                files = {"image": (img.filename, img.file, img.content_type)}
+                data = {"prompt": prompt, "n": outputs, "size": size}
+                resp = requests.post(
+                    "https://api.openai.com/v1/images/edits",
+                    headers=headers,
+                    files=files,
+                    data=data
+                )
+                if resp.status_code == 200:
+                    data_json = resp.json()
+                    urls = [item["url"] for item in data_json.get("data", [])]
+                    results.append({"original": img.filename, "outputs": urls})
+                else:
+                    results.append({"original": img.filename, "error": resp.text})
+        else:
+            # ✅ Normal text-to-image
+            payload = {"prompt": prompt, "n": outputs, "size": size}
+            resp = requests.post(
+                "https://api.openai.com/v1/images/generations",
+                headers={**headers, "Content-Type": "application/json"},
+                json=payload
+            )
+            if resp.status_code == 200:
+                data_json = resp.json()
+                urls = [item["url"] for item in data_json.get("data", [])]
+                results.append({"original": None, "outputs": urls})
+            else:
+                results.append({"error": resp.text})
 
-        data = resp.json()
-        images = [item["url"] for item in data.get("data", [])]
-        return {
-            "images": images,
-            "hint": hint
-        }
+        return {"results": results}
+
     except requests.RequestException as e:
-        return { "error": f"Network error: {e}", "hint": hint }
+        return {"error": str(e)}
