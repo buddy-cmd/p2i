@@ -3,36 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>P2i — Gram Sabha AI Generator</title>
+  <title>P2i — AI Image Transformer</title>
+  <link rel="icon" href="assets/favicon.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>P2i — Gram Sabha AI Generator</h1>
+  <header class="site-header">
+    <img src="assets/logo.png" alt="P2i Logo" class="site-logo" />
+    <h1>P2i — AI Image Transformer</h1>
     <p>Upload up to 5 images + prompt → AI transforms them</p>
   </header>
 
   <main>
-    <form id="gen-form">
-      <label>Prompt</label>
-      <textarea name="prompt" required placeholder="Describe changes..."></textarea>
+    <form id="gen-form" class="gen-form">
+      <div class="form-block">
+        <label for="images">📤 Image upload</label>
+        <div class="upload-box" id="upload-box">
+          <div class="upload-icon">⬆️</div>
+          <label for="images" class="upload-label">Upload Image</label>
+          <input type="file" name="images" id="images" accept=".jpg,.jpeg,.png,.webp" multiple hidden />
+          <p class="upload-note">We accept .jpeg, .jpg, .png, .webp formats up to 24MB.</p>
+          <div id="file-list" class="file-list"></div>
+        </div>
+      </div>
 
-      <label>Image Size</label>
-      <select name="size">
-        <option value="512x512">512 × 512</option>
-        <option value="1024x1024" selected>1024 × 1024</option>
-        <option value="1920x1080">1920 × 1080</option>
-      </select>
+      <div class="form-block">
+        <label for="prompt">📝 Describe what you want to change</label>
+        <textarea name="prompt" id="prompt" maxlength="1000" required placeholder="Example: Change the background to a blue sky."></textarea>
+        <div id="char-count">0/1000</div>
+      </div>
 
-      <label>Upload up to 5 Images</label>
-      <input type="file" name="images" id="images" accept="image/*" multiple />
+      <div class="grid-2">
+        <div class="form-block">
+          <label for="model">🧠 Choose model</label>
+          <select name="model" id="model">
+            <option value="max" selected>Max — Faster processing (UI only)</option>
+            <option value="standard">Standard — Balanced quality (UI only)</option>
+          </select>
+          <p class="subnote">Model selection is UI-only for now.</p>
+        </div>
 
-      <button type="submit">Generate</button>
+        <div class="form-block">
+          <label for="size">🖼️ Image size</label>
+          <select name="size" id="size">
+            <option value="512x512">512 × 512</option>
+            <option value="1024x1024" selected>1024 × 1024</option>
+          </select>
+          <p class="subnote">Direct 4K/8K not supported. Use upscaler if needed.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-block">
+          <label for="aspect">📐 Aspect ratio</label>
+          <select name="aspect" id="aspect">
+            <option value="1:1" selected>1:1</option>
+            <option value="2:3">2:3</option>
+            <option value="3:2">3:2</option>
+            <option value="3:4">3:4</option>
+            <option value="4:3">4:3</option>
+            <option value="9:16">9:16</option>
+            <option value="16:9">16:9</option>
+          </select>
+          <p class="subnote">Aspect adjusts canvas; actual size uses “Image size”.</p>
+        </div>
+
+        <div class="form-block">
+          <label for="outputs">🔢 Number of outputs</label>
+          <select name="outputs" id="outputs">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="generate-btn">🚀 Generate Images</button>
     </form>
 
-    <div id="status"></div>
+    <div id="status" class="status"></div>
+
     <section id="multi-comparison" class="multi-comparison"></section>
   </main>
+
+  <footer class="site-footer">
+    <p>P2i — Prompt to Image • Open source</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
