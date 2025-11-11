@@ -3,12 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 import requests, os
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
 
 app = FastAPI()
 
-# ✅ CORS setup for Netlify frontend
+# ✅ Allow frontend (Netlify) to connect
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,13 +23,12 @@ async def generate_image(
     size: str = Form("1024x1024"),
     outputs: int = Form(1),
     aspect: str = Form("1:1"),
-    model: str = Form("max"),  # UI only
+    model: str = Form("max"),  # UI-only field
     images: list[UploadFile] = File(None)
 ):
     headers = {"Authorization": f"Bearer {API_KEY}"}
     results = []
-
-    n = min(max(int(outputs), 1), 4)  # Limit outputs to 1–4
+    n = min(max(int(outputs), 1), 4)  # Limit outputs between 1–4
 
     try:
         if images:
@@ -46,6 +46,8 @@ async def generate_image(
                     data_json = resp.json()
                     urls = [item.get("url") for item in data_json.get("data", []) if item.get("url")]
                     print(f"✅ Img2Img URLs for {img.filename}: {urls}")
+                    if not urls:
+                        print("⚠️ No image URLs returned by OpenAI (Img2Img)")
                     results.append({"original": img.filename, "outputs": urls})
                 else:
                     print(f"❌ Img2Img error for {img.filename}: {resp.text}")
@@ -62,6 +64,8 @@ async def generate_image(
                 data_json = resp.json()
                 urls = [item.get("url") for item in data_json.get("data", []) if item.get("url")]
                 print(f"✅ Text2Img URLs: {urls}")
+                if not urls:
+                    print("⚠️ No image URLs returned by OpenAI (Text2Img)")
                 results.append({"original": None, "outputs": urls})
             else:
                 print(f"❌ Text2Img error: {resp.text}")
