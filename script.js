@@ -31,3 +31,4 @@ document.getElementById("generateForm").addEventListener("submit", async (e) => 
     results.innerHTML = `<p style="color:red;">Error: ${data.error}</p>`;
   }
 });
+
