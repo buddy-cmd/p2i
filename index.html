@@ -3,96 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>P2i — Prompt to Image</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>P2i — Gram Sabha AI Generator</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="app-header">
-    <div class="brand">
-      <div class="logo">P2i</div>
-      <div class="subtitle">Free, fast image generation for Gram Sabha demos</div>
-    </div>
-    <nav class="nav">
-      <a href="#" class="nav-link">AI Tools</a>
-      <a href="#" class="nav-link">Photo Effects</a>
-      <a href="#" class="nav-link">My Creations</a>
-    </nav>
+  <header>
+    <h1>P2i — Gram Sabha AI Generator</h1>
+    <p>Upload up to 5 images + prompt → AI transforms them</p>
   </header>
 
-  <main class="container">
-    <section class="panel">
-      <form id="gen-form" class="form" autocomplete="off">
-        <div class="form-grid">
-          <div class="form-item form-item--wide">
-            <label for="prompt">Prompt</label>
-            <textarea id="prompt" name="prompt" placeholder="Describe your image..." rows="3" required></textarea>
-          </div>
+  <main>
+    <form id="gen-form">
+      <label>Prompt</label>
+      <textarea name="prompt" required placeholder="Describe changes..."></textarea>
 
-          <div class="form-item">
-            <label for="model">Model</label>
-            <select id="model" name="model">
-              <option value="Max">Max (4K)</option>
-              <option value="Standard">Standard</option>
-            </select>
-          </div>
+      <label>Image Size</label>
+      <select name="size">
+        <option value="512x512">512 × 512</option>
+        <option value="1024x1024" selected>1024 × 1024</option>
+        <option value="1920x1080">1920 × 1080</option>
+      </select>
 
-          <div class="form-item">
-            <label for="aspect">Aspect ratio</label>
-            <select id="aspect" name="aspect_ratio">
-              <option value="1:1">1:1</option>
-              <option value="4:3">4:3</option>
-              <option value="16:9">16:9</option>
-            </select>
-          </div>
+      <label>Upload up to 5 Images</label>
+      <input type="file" name="images" id="images" accept="image/*" multiple />
 
-          <div class="form-item">
-            <label for="outputs">Number of outputs</label>
-            <select id="outputs" name="outputs">
-              <option value="1">1</option>
-              <option value="2" selected>2</option>
-              <option value="4">4</option>
-            </select>
-          </div>
+      <button type="submit">Generate</button>
+    </form>
 
-          <div class="form-item form-item--wide">
-            <label for="image">Upload image (optional)</label>
-            <input id="image" type="file" name="image" accept="image/*" />
-            <small class="hint">Use this for img2img-style variations</small>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button id="generate-btn" type="submit" class="btn btn-primary">
-            <span class="btn-label">Generate image</span>
-          </button>
-          <button id="clear-btn" type="button" class="btn btn-ghost">Clear gallery</button>
-        </div>
-
-        <div id="status" class="status" aria-live="polite"></div>
-        <div id="progress" class="progress" hidden>
-          <div class="spinner"></div>
-          <div class="progress-text">Generating… please wait</div>
-        </div>
-      </form>
-    </section>
-
-    <section class="panel">
-      <div class="panel-header">
-        <h2 class="panel-title">Gallery</h2>
-        <div class="panel-actions">
-          <button id="download-all" class="btn btn-ghost" disabled>Download all</button>
-        </div>
-      </div>
-      <div id="gallery" class="gallery grid"></div>
-    </section>
+    <div id="status"></div>
+    <section id="multi-comparison" class="multi-comparison"></section>
   </main>
-
-  <footer class="footer">
-    <p>Made by Sadare Alam for Nipaniya Gram Sabha | Backend: p2i.onrender.com</p>
-  </footer>
 
   <script src="script.js"></script>
 </body>
